@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChaveServiceImplement {
 
+
+
+
+
     public boolean isCpfValido(String tipo, String valor) {
         if (!"cpf".equalsIgnoreCase(tipo)){
             return false;
@@ -135,8 +139,6 @@ public class ChaveServiceImplement {
             return false;
         }
 
-        // Outras validações específicas para números de celular
-        // Adicione as regras de validação adicionais aqui, se necessário
 
         return true;
     }

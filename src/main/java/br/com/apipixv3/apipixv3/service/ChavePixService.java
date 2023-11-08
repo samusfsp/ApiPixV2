@@ -5,6 +5,7 @@ import br.com.apipixv3.apipixv3.domain.ChavePix;
 import br.com.apipixv3.apipixv3.repository.ChavePixRepository;
 import br.com.apipixv3.apipixv3.repository.ClienteRepository;
 import br.com.apipixv3.apipixv3.validation.LimiteChaveValidation;
+import br.com.apipixv3.apipixv3.validation.TipoChaveValidador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,10 @@ public class ChavePixService {
     @Autowired
     chavePixRequestConverter converter;
 
+    @Autowired
+    TipoChaveValidador tipoChaveValidador;
+
+
 
     public ChavePix cadastrar(ChavePix chavePix) {
 
@@ -41,38 +46,39 @@ public class ChavePixService {
         String tipoChave = chavePix.getTipo();
         String valorChave = chavePix.getValor();
 
-//        // Chave duplicada
-//        Optional<ChavePix> existingChavePix = repository.findByValor(valorChave);
-//        if (existingChavePix.isPresent()) {
-//            throw new IllegalArgumentException("Chave duplicada. A chave informada já está cadastrada.");
-//        }
-
-
-        if ("cpf".equalsIgnoreCase(tipoChave)) {
-            if (!serviceImplement.isCpfValido(tipoChave, valorChave)) {
-                throw new IllegalArgumentException("CPF inválido. Verifique os campos.\nchave: " + valorChave);
-            }
-        } else if ("email".equalsIgnoreCase(tipoChave)) {
-            if (!serviceImplement.isEmailValido(tipoChave, valorChave)) {
-                throw new IllegalArgumentException("Email inválido. Verifique os campos.\nchave: " + valorChave);
-            }
-        } else if ("cnpj".equalsIgnoreCase(tipoChave)) {
-            if (!serviceImplement.isCnpjValido(valorChave, tipoChave)) {
-                throw new IllegalArgumentException("CNPJ inválido. Verifique os campos.\nchave: " + valorChave);
-            }
-        } else if ("celular".equalsIgnoreCase(tipoChave)) {
-            if (!serviceImplement.isCelularValido(valorChave)) {
-                throw new IllegalArgumentException("Celular inválido. Verifique os campos.\nchave: " + valorChave);
-            }
-        } else if ("aleatoria".equalsIgnoreCase(tipoChave)) {
-            if (!serviceImplement.isChaveAleatoriaValido(valorChave)) {
-                throw new IllegalArgumentException("Chave Aleatória inválida. Verifique os campos.\nchave: " + valorChave);
-            }
-        } else {
-            throw new IllegalArgumentException("Tipo de chave inválido. Verifique os campos.");
+        // Chave duplicada
+        Optional<ChavePix> existingChavePix = repository.findByValor(valorChave);
+        if (existingChavePix.isPresent()) {
+            throw new IllegalArgumentException("Chave duplicada. A chave informada já está cadastrada.");
         }
 
 
+//        if ("cpf".equalsIgnoreCase(tipoChave)) {
+//            if (!serviceImplement.isCpfValido(tipoChave, valorChave)) {
+//                throw new IllegalArgumentException("CPF inválido. Verifique os campos.\nchave: " + valorChave);
+//            }
+//        } else if ("email".equalsIgnoreCase(tipoChave)) {
+//            if (!serviceImplement.isEmailValido(tipoChave, valorChave)) {
+//                throw new IllegalArgumentException("Email inválido. Verifique os campos.\nchave: " + valorChave);
+//            }
+//        } else if ("cnpj".equalsIgnoreCase(tipoChave)) {
+//            if (!serviceImplement.isCnpjValido(valorChave, tipoChave)) {
+//                throw new IllegalArgumentException("CNPJ inválido. Verifique os campos.\nchave: " + valorChave);
+//            }
+//        } else if ("celular".equalsIgnoreCase(tipoChave)) {
+//            if (!serviceImplement.isCelularValido(valorChave)) {
+//                throw new IllegalArgumentException("Celular inválido. Verifique os campos.\nchave: " + valorChave);
+//            }
+//        } else if ("aleatoria".equalsIgnoreCase(tipoChave)) {
+//            if (!serviceImplement.isChaveAleatoriaValido(valorChave)) {
+//                throw new IllegalArgumentException("Chave Aleatória inválida. Verifique os campos.\nchave: " + valorChave);
+//            }
+//        } else {
+//            throw new IllegalArgumentException("Tipo de chave inválido. Verifique os campos.");
+//        }
+
+
+        tipoChaveValidador.validarChave(tipoChave, valorChave );
         ChavePix save = repository.save(chavePix);
 
         return save;
